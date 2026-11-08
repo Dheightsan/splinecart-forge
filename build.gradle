@@ -1,0 +1,87 @@
+// Forge 1.20.1 port of Splinecart 0.3.1 by FoundationGames (MIT).
+// Based on hedgehog1029's NeoForge 1.21.1 port (github.com/hedgehog1029/Splinecart, branch 1.21.1-neoforge, commit 5ff44ce).
+// OriginComponent follows Forkcart by ImplicitSaber (MIT).
+
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+group = 'io.github.foundationgames.splinecart'
+version = '0.3.1-1.20.1.0'
+
+base {
+    archivesName = 'splinecart'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods { splinecart { source sourceSets.main } }
+        }
+        client { workingDirectory project.file('run_client') }
+        server { args '--nogui' }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    add sourceSets.main, 'splinecart.refmap.json'
+    config 'splinecart.mixins.json'
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+        minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+        forge_version: forge_version, forge_version_range: forge_version_range,
+        loader_version_range: loader_version_range
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    from('LICENSE') {
+        into 'META-INF'
+    }
+    manifest {
+        attributes([
+            'MixinConfigs'            : 'splinecart.mixins.json',
+            'Specification-Title'     : 'splinecart',
+            'Specification-Vendor'    : 'FoundationGames',
+            'Specification-Version'   : '1',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.jar.archiveVersion,
+            'Implementation-Vendor'   : 'FoundationGames (Forge port: danisansietev)'
+        ])
+    }
+    finalizedBy 'reobfJar'
+}

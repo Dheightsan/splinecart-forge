@@ -1,0 +1,47 @@
+package io.github.foundationgames.splinecart;
+
+import io.github.foundationgames.splinecart.block.TrackTiesBlockEntity;
+import io.github.foundationgames.splinecart.component.OriginComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.BlockHitResult;
+
+public class SplinecartHud {
+    public static final Component CANCEL = Component.translatable("hud.splinecart.cancel").withStyle(ChatFormatting.RED);
+    public static final Component CREATE = Component.translatable("hud.splinecart.create_track").withStyle(ChatFormatting.GREEN);
+    public static final String RIGHT_CLICK_HINT = "hud.splinecart.right_click";
+
+    public void onHudRender(GuiGraphics drawContext, float tickCounter) {
+        var client = Minecraft.getInstance();
+        var world = client.level;
+
+        if (world != null && client.player != null) {
+            var origin = OriginComponent.get(client.player.getMainHandItem());
+
+            if (origin == null) {
+                origin = OriginComponent.get(client.player.getOffhandItem());
+            }
+
+            if (origin != null && client.hitResult instanceof BlockHitResult hit) {
+                var pos = hit.getBlockPos();
+                if (world.getBlockState(pos).isAir()) {
+                    return;
+                }
+
+                var hint = CANCEL;
+
+                if (!pos.equals(origin.pos()) && world.getBlockEntity(pos) instanceof TrackTiesBlockEntity ties && ties.prev() == null) {
+                    hint = CREATE;
+                }
+
+                int w = drawContext.guiWidth();
+                int h = drawContext.guiHeight();
+
+                var text = Component.translatable(RIGHT_CLICK_HINT, client.options.keyUse.getTranslatedKeyMessage(), hint);
+                drawContext.drawCenteredString(client.font, text, w / 2, (h / 2) + 20, 0xFFFFFFFF);
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.foundationgames.splinecart.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "splinecart.refmap.json",
+  "mixins": [
+    "EntityMixin"
+  ],
+  "client": [
+    "client.CameraMixin",
+    "client.EntityRenderDispatcherMixin",
+    "client.InGameOverlayRendererMixin",
+    "client.MinecartInsideSoundInstanceMixin",
+    "client.MovingMinecartSoundInstanceMixin",
+    "client.WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

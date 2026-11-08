@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="MIT (Copyright (c) FoundationGames; Forge 1.20.1 port by danisansietev)"
+issueTrackerURL="https://github.com/Dheightsan/splinecart-forge/issues"
+[[mods]]
+modId="splinecart"
+version="${project.version}"
+displayName="Splinecart (Forge Port)"
+displayURL="https://github.com/Dheightsan/splinecart-forge"
+authors="FoundationGames (Forge 1.20.1 port: danisansietev)"
+credits="hedgehog1029 (NeoForge 1.21.1 port this one is derived from), ImplicitSaber (Forkcart: rendering reference, and the design of the OriginComponent class)"
+description='''
+Curved minecart tracks: a Track Ties block and three track items that join
+two Track Ties blocks with a smooth curve that can climb, drop and turn.
+Unofficial Forge 1.20.1 port of Splinecart by FoundationGames (MIT), based on
+hedgehog1029's NeoForge 1.21.1 port of it. Not made or endorsed by either of
+them. Report bugs of this port to its own repository, not upstream.
+'''
+[[dependencies.splinecart]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.splinecart]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
